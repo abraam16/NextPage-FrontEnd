@@ -1,0 +1,86 @@
+<!-- Banner navideño arriba -->
+<div class="holiday-banner">🎄 ¡Felices Fiestas! 🎁</div>
+
+<nav class="navbar">
+
+  <!-- Logo con luces -->
+  <div class="logo">
+    <a routerLink="/">
+      <span class="logo-icon">📖</span> NEXT PAGE
+      <span class="lights">
+        <span></span><span></span><span></span><span></span><span></span>
+      </span>
+    </a>
+  </div>
+
+  <!-- Buscador centrado -->
+  <div class="search-box">
+    <input type="text" placeholder="Buscar libros, autores o géneros...">
+    <button><span class="material-icons">search</span></button>
+  </div>
+
+  <!-- Links dinámicos a la derecha -->
+  <ul class="nav-links" *ngIf="!userService.isLoggedIn()">
+    <li><a routerLink="/login" class="btn-nav">Iniciar Sesión</a></li>
+    <li><a routerLink="/registro" class="btn-nav">Registrarse</a></li>
+  </ul>
+
+  <!-- Links para usuarios logueados -->
+  <ul 
+    class="nav-links"
+    [ngClass]="{ 'profesor': userService.getCurrentUser()?.role === 'profesor' }"
+    *ngIf="userService.isLoggedIn()">
+
+    <!-- Si es PROFESOR -->
+    <ng-container *ngIf="userService.getCurrentUser()?.role === 'profesor'; else alumnoLinks">
+
+      <li><a routerLink="/libros">Biblioteca</a></li>
+      <li><a routerLink="/promociones">Promociones</a></li>
+      <li><a routerLink="/clases">Clases</a></li>
+      <li><a routerLink="/tareas">Tareas</a></li>
+      <li><a routerLink="/teacher-dashboard">Panel Docente</a></li>
+
+      <!-- Nombre del profesor -->
+      <li>
+        <a routerLink="/teacher-dashboard">
+          {{ userService.getCurrentUser()?.nombre }}
+        </a>
+      </li>
+
+      <li><button class="btn-nav" (click)="logout()">Cerrar Sesión</button></li>
+
+    </ng-container>
+
+    <!-- Si es ALUMNO -->
+    <ng-template #alumnoLinks>
+      <li><a routerLink="/libros">Libros</a></li>
+      <li><a routerLink="/promociones">Promociones</a></li>
+      <li>
+        <a routerLink="/student-dashboard">
+          {{ userService.getCurrentUser()?.nombre }}
+        </a>
+      </li>
+      <li><button class="btn-nav" (click)="logout()">Cerrar Sesión</button></li>
+    </ng-template>
+
+  </ul>
+
+  <!-- Trineo animado con renos -->
+  <div class="santa-sleigh">
+    <span class="santa">🎅</span>
+    <span class="reindeer">🦌</span>
+    <span class="reindeer">🦌</span>
+    <span class="reindeer">🦌</span>
+    <span class="reindeer">🦌</span>
+  </div>
+
+  <!-- Copos de nieve -->
+  <div class="snowflakes" aria-hidden="true">
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❄</div>
+    <div class="snowflake">❄</div>
+  </div>
+
+</nav>

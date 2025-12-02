@@ -1,0 +1,90 @@
+<div class="admin-container">
+  <!-- Header -->
+  <div class="admin-header">
+    <h1>🚀 Panel de Administración</h1>
+    <p>Bienvenido, <strong>{{ nombreAdmin }}</strong>. Gestión centralizada del sistema Next Page.</p>
+  </div>
+
+  <hr>
+
+  <!-- Estadísticas -->
+  <section class="stats-section">
+    <h2>Resumen del Sistema</h2>
+    <div class="stats-grid">
+      <div *ngFor="let stat of stats" class="stat-card">
+        <div class="icon">{{ stat.icon }}</div>
+        <div class="details">
+          <p class="title">{{ stat.title }}</p>
+          <p class="value">{{ stat.value | number }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- Módulos de Gestión -->
+  <section class="modules-section">
+    <h2>Módulos de Gestión</h2>
+    <div class="modules-grid">
+      <div *ngFor="let module of managementModules" class="module-card" (click)="navegarAModulo(module.route)">
+        <div class="module-icon">{{ module.icon }}</div>
+        <h3>{{ module.name }}</h3>
+        <p>{{ module.description }}</p>
+        <span class="btn-goto">Ir al módulo →</span>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- Gestión de Libros -->
+  <section class="books-section">
+    <h2>Libros en Catálogo</h2>
+
+    <div class="books-controls">
+      <input type="text" placeholder="Buscar título o autor..." [(ngModel)]="searchTerm" (ngModelChange)="aplicarFiltros()">
+      <select [(ngModel)]="selectedGenero" (ngModelChange)="aplicarFiltros()">
+        <option *ngFor="let g of generosUnicos" [value]="g">{{ g }}</option>
+      </select>
+      <button class="btn-add" (click)="addLibro()">➕ Agregar Libro</button>
+    </div>
+
+    <div class="books-grid">
+      <div *ngFor="let libro of librosFiltrados" class="book-card">
+        <div class="book-cover">{{ libro.titulo.charAt(0) }}</div>
+        <div class="book-details">
+          <h3 *ngIf="editingLibro?.id!==libro.id">{{ libro.titulo }}</h3>
+          <input *ngIf="editingLibro?.id===libro.id" [(ngModel)]="editingLibro.titulo">
+
+          <p *ngIf="editingLibro?.id!==libro.id">{{ libro.autor }}</p>
+          <input *ngIf="editingLibro?.id===libro.id" [(ngModel)]="editingLibro.autor">
+
+          <p>Género: <span *ngIf="editingLibro?.id!==libro.id">{{ libro.genero }}</span>
+          <input *ngIf="editingLibro?.id===libro.id" [(ngModel)]="editingLibro.genero"></p>
+
+          <p>Disponible: <span *ngIf="editingLibro?.id!==libro.id">{{ libro.disponible ? 'Sí':'No' }}</span>
+          <select *ngIf="editingLibro?.id===libro.id" [(ngModel)]="editingLibro.disponible"><option [value]="true">Sí</option><option [value]="false">No</option></select></p>
+
+          <p>Rating: <span *ngIf="editingLibro?.id!==libro.id">{{ libro.rating }}</span>
+          <input *ngIf="editingLibro?.id===libro.id" type="number" min="0" max="5" step="0.1" [(ngModel)]="editingLibro.rating"></p>
+
+          <div class="book-actions">
+            <button *ngIf="editingLibro?.id!==libro.id" (click)="editLibro(libro)">✏️ Editar</button>
+            <button *ngIf="editingLibro?.id===libro.id" (click)="saveLibro()">💾 Guardar</button>
+            <button *ngIf="editingLibro?.id===libro.id" (click)="cancelEdit()">❌ Cancelar</button>
+            <button (click)="deleteLibro(libro)">🗑️ Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- Acciones rápidas -->
+  <div class="quick-actions">
+    <button class="btn-danger">Limpiar Caché</button>
+    <button class="btn-success">Ver Logs del Sistema</button>
+  </div>
+</div>

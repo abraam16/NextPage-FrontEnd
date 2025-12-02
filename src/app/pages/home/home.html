@@ -1,0 +1,104 @@
+<div class="hero-triptico-wrapper">
+
+  <!-- PANEL IZQUIERDO: Buscador / categorías -->
+  <div class="panel-left">
+    <h3>Buscar Libros</h3>
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Título o autor"
+        [(ngModel)]="textoBusqueda"
+      >
+      <button (click)="buscarLibros()">Buscar</button>
+    </div>
+
+    <!-- RESULTADOS DE BÚSQUEDA -->
+    <div *ngIf="resultadosBusqueda.length > 0" class="search-results">
+      <h4>Resultados:</h4>
+      <ul>
+        <li *ngFor="let libro of resultadosBusqueda">
+          {{ libro.titulo }}
+        </li>
+      </ul>
+    </div>
+
+    <div *ngIf="resultadosBusqueda.length === 0 && textoBusqueda">
+      <p>No se encontraron resultados.</p>
+    </div>
+
+    <h4>Categorías Populares</h4>
+    <ul>
+      <li *ngFor="let cat of categorias">
+        <a href="#">{{ cat.titulo }}</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- CENTRO: Hero -->
+  <div class="panel-center">
+    <section class="hero-carousel-wrapper">
+      <div class="hero-slide" *ngFor="let slide of slidesHero; let i = index"
+           [style.backgroundImage]="'url(' + slide.imagen + ')'"
+           [class.active]="i === activeSlide">
+        <div class="hero-text-box">
+          <h1>{{ slide.titulo }}</h1>
+          <p>{{ slide.subtitulo }}</p>
+          <div class="hero-buttons">
+            <a routerLink="/catalogo" class="btn-primary">Explorar Libros</a>
+            <a routerLink="/registro" class="btn-outline">Crear Cuenta</a>
+          </div>
+        </div>
+        <div class="hero-overlay"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- PANEL DERECHO: Galería de libros -->
+  <div class="panel-right">
+    <h3>Libros Destacados</h3>
+    <div class="books-gallery">
+      <div class="book-card" *ngFor="let libro of librosRecomendados">
+        <img [src]="libro.portada" alt="{{libro.titulo}}">
+        <h4>{{libro.titulo}}</h4>
+        <p>{{libro.autor}}</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECCIONES CENTRADAS -->
+<div class="home-sections">
+
+  <ng-container *ngFor="let seccion of [
+    {titulo:'Novedades', libros:novedades},
+    {titulo:'Libros Juveniles', libros:librosJuveniles},
+    {titulo:'Un Mundo para Cada Lector', libros:mundoLector},
+    {titulo:'Comics / Mangas', libros:comicsMangas},
+    {titulo:'Libros de Ficción', libros:ficcion},
+    {titulo:'Libros en Inglés', libros:librosIngles},
+    {titulo:'Libros Infantiles', libros:librosInfantiles},
+    {titulo:'Libros No Ficción', libros:librosNoFiccion}
+  ]">
+    <h2 class="section-title">{{seccion.titulo}}</h2>
+    <section class="categories-row">
+      <div class="category-book" *ngFor="let libro of seccion.libros">
+        <img [src]="libro.portada" alt="{{libro.titulo}}">
+        <h4>{{libro.titulo}}</h4>
+      </div>
+    </section>
+  </ng-container>
+
+  <!-- Banner Publicidad -->
+  <h2 class="section-title">Publicidad</h2>
+  <section class="banner-row">
+    <div class="banner-card" *ngFor="let banner of bannersPublicidad">
+      <img [src]="banner.imagen" alt="{{banner.titulo}}">
+      <div class="banner-text">
+        <h3>{{banner.titulo}}</h3>
+        <p>{{banner.subtitulo}}</p>
+      </div>
+    </div>
+  </section>
+
+</div>
