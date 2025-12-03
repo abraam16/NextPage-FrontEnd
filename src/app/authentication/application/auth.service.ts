@@ -20,14 +20,15 @@ export class AuthService {
 
   login(credentials: LoginCredentials): Observable<AuthResult> {
     return this.userRepository
-      .findByEmailAndPassword(credentials.email, credentials.password)
+      .login(credentials)
       .pipe(
-        map((users: User[]) => {
-          if (users.length === 0) {
+        map((response: any) => {
+          if (!response || !response.user) {
             return { success: false, error: 'Credenciales incorrectas' };
           }
-          const user = users[0];
-          this.saveUser(user);
+          const user = response.user;
+          const token = response.token;
+          this.saveUser(user, token);
           return { success: true, user };
         })
       );
@@ -40,8 +41,9 @@ export class AuthService {
       activo: true,
       puntos: userData.role === 'alumno' ? 0 : undefined
     };
-    return this.userRepository.create(newUser).pipe(
-      map(user => {
+    return this.userRepository.register(newUser).pipe(
+      map((response: any) => {
+        const user = response;
         this.saveUser(user);
         return user;
       })
@@ -53,10 +55,15 @@ export class AuthService {
     localStorage.removeItem('loggedUser');
     localStorage.removeItem('nombreUsuario');
     localStorage.removeItem('rolUsuario');
+    localStorage.removeItem('jwtToken');
   }
 
   getCurrentUser(): User | null {
     return this.currentUser;
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('jwtToken');
   }
 
   isLoggedIn(): boolean {
@@ -67,11 +74,14 @@ export class AuthService {
     return this.currentUser !== null;
   }
 
-  private saveUser(user: User): void {
+  private saveUser(user: User, token?: string): void {
     this.currentUser = user;
     localStorage.setItem('loggedUser', JSON.stringify(user));
     localStorage.setItem('nombreUsuario', user.nombre);
     localStorage.setItem('rolUsuario', user.role);
+    if (token) {
+      localStorage.setItem('jwtToken', token);
+    }
   }
 
   private loadUser(): void {

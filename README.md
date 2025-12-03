@@ -7,7 +7,8 @@ Sistema de gestión de biblioteca digital para instituciones educativas, impleme
 - **Angular 20** - Framework frontend
 - **TypeScript 5.8** - Lenguaje de programación
 - **RxJS 7.8** - Programación reactiva
-- **JSON Server 0.17.4** - API REST mock
+- **Spring Boot** - Backend API REST (puerto 8080)
+- **JWT Authentication** - Autenticación segura
 - **Standalone Components** - Arquitectura moderna de Angular
 - **SCSS/CSS** - Estilos
 
@@ -19,25 +20,21 @@ npm install
 
 ## Ejecución
 
-### Opción 1: Ejecutar todo (Recomendado)
-```powershell
-npm run dev
-```
-Inicia automáticamente:
-- Frontend en http://localhost:4200
-- Backend Mock API en http://localhost:3000
+### Prerrequisitos
+1. **Backend Spring Boot** debe estar corriendo en `http://localhost:8080`
+2. Ver [INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md) para detalles de conexión
 
-### Opción 2: Ejecutar por separado
-
-**Terminal 1 - Backend:**
-```powershell
-npm run server
-```
-
-**Terminal 2 - Frontend:**
+### Iniciar Frontend
 ```powershell
 npm start
 ```
+
+El frontend estará disponible en: `http://localhost:4200`
+
+### Backend API
+- **Base URL**: `http://localhost:8080/api`
+- **Autenticación**: JWT Bearer Token
+- Ver [API_ENDPOINTS.md](API_ENDPOINTS.md) para documentación completa de endpoints
 
 ## Usuarios de Prueba
 
@@ -134,40 +131,50 @@ Cada Bounded Context sigue la estructura de capas:
 
 ## API Endpoints
 
-**Base URL**: `http://localhost:3000`
+**Base URL**: `http://localhost:8080/api`
 
-### Usuarios
-- `GET /users` - Listar usuarios
-- `GET /users/:id` - Obtener usuario
-- `POST /users` - Crear usuario
-- `PUT /users/:id` - Actualizar usuario
-- `DELETE /users/:id` - Eliminar usuario
-- `GET /users?email=X&password=Y` - Autenticar
+Ver documentación completa en [API_ENDPOINTS.md](API_ENDPOINTS.md)
 
-### Libros
-- `GET /books` - Listar libros
-- `GET /books/:id` - Obtener libro
-- `POST /books` - Crear libro
-- `PUT /books/:id` - Actualizar libro
-- `DELETE /books/:id` - Eliminar libro
-- `GET /books?disponible=true` - Libros disponibles
+### Autenticación (públicos)
+- `POST /api/auth/login` - Login con JWT
+- `POST /api/auth/register` - Registro de usuario
 
-### Préstamos
-- `GET /borrowings` - Listar préstamos
-- `GET /borrowings/:id` - Obtener préstamo
-- `POST /borrowings` - Crear préstamo
-- `PUT /borrowings/:id` - Actualizar préstamo
-- `DELETE /borrowings/:id` - Eliminar préstamo
+### Usuarios (requieren autenticación)
+- `GET /api/users` - Listar usuarios
+- `GET /api/users/{id}` - Obtener usuario
+- `GET /api/users/email/{email}` - Buscar por email
+- `PUT /api/users/{id}` - Actualizar usuario
+- `DELETE /api/users/{id}` - Eliminar usuario
 
-### Cursos
-- `GET /courses` - Listar cursos
-- `GET /courses/:id` - Obtener curso
-- `POST /courses` - Crear curso
+### Libros (GET públicos, POST/PUT/DELETE requieren auth)
+- `GET /api/books` - Listar libros
+- `GET /api/books/{id}` - Obtener libro
+- `GET /api/books/search/titulo?titulo=...` - Buscar por título
+- `GET /api/books/search/autor?autor=...` - Buscar por autor
+- `POST /api/books` - Crear libro
+- `PUT /api/books/{id}` - Actualizar libro
+- `DELETE /api/books/{id}` - Eliminar libro
 
-### Actividades
-- `GET /activities` - Listar actividades
-- `GET /activities/:id` - Obtener actividad
-- `POST /activities` - Crear actividad
+### Préstamos (requieren autenticación)
+- `GET /api/borrowings` - Listar préstamos
+- `GET /api/borrowings/{id}` - Obtener préstamo
+- `POST /api/borrowings` - Crear préstamo
+- `PUT /api/borrowings/{id}` - Actualizar préstamo
+- `DELETE /api/borrowings/{id}` - Eliminar préstamo
+
+### Cursos (requieren autenticación)
+- `GET /api/courses` - Listar cursos
+- `GET /api/courses/{id}` - Obtener curso
+- `POST /api/courses` - Crear curso
+- `PUT /api/courses/{id}` - Actualizar curso
+- `DELETE /api/courses/{id}` - Eliminar curso
+
+### Actividades (requieren autenticación)
+- `GET /api/activities` - Listar actividades
+- `GET /api/activities/{id}` - Obtener actividad
+- `POST /api/activities` - Crear actividad
+- `PUT /api/activities/{id}` - Actualizar actividad
+- `DELETE /api/activities/{id}` - Eliminar actividad
 
 ## Servicios y Repositorios
 
@@ -178,10 +185,11 @@ Cada Bounded Context sigue la estructura de capas:
 import { AuthService } from './authentication/application/auth.service';
 
 // Métodos disponibles:
-authService.login({ email, password })
+authService.login({ email, password }) // Retorna JWT token
 authService.register(userData)
 authService.logout()
 authService.getCurrentUser()
+authService.getToken() // Obtener JWT token
 authService.isLoggedIn()
 
 // Catalog Service
@@ -189,8 +197,8 @@ import { CatalogService } from './library/application/catalog.service';
 
 // Métodos disponibles:
 catalogService.getAllBooks()
-catalogService.getBookById(id)
-catalogService.getAvailableBooks()
+catalogService.searchBooks(searchTerm, genero)
+catalogService.getUniqueGenres()
 ```
 
 ### Repositorios
@@ -208,19 +216,40 @@ findWithParams(params: HttpParams): Observable<T[]>
 
 // Repositorios específicos:
 import { UserRepository } from './authentication/infrastructure/user.repository';
+// Métodos adicionales:
+userRepository.login({ email, password }) // POST /api/auth/login
+userRepository.register(userData) // POST /api/auth/register
+userRepository.findByEmail(email)
+
 import { BookRepository } from './library/infrastructure/book.repository';
 import { BorrowingRepository } from './library/infrastructure/borrowing.repository';
 import { CourseRepository } from './academic/infrastructure/course.repository';
 import { ActivityRepository } from './academic/infrastructure/activity.repository';
 ```
 
+### Autenticación JWT
+
+El sistema usa JWT tokens para autenticación:
+
+1. **Login**: `POST /api/auth/login` retorna `{ token, user }`
+2. **Token Storage**: Se guarda en `localStorage.jwtToken`
+3. **Auto-Injection**: El `AuthInterceptor` agrega automáticamente el header:
+   ```
+   Authorization: Bearer {token}
+   ```
+4. **Logout**: Limpia el token y redirige a login
+
 ## Datos de Prueba
 
-El archivo `server/db.json` contiene:
+Los datos iniciales deben estar en la base de datos del backend:
 
 - **3 usuarios**: 1 alumno, 1 profesor, 1 administrador
 - **18 libros**: Diversos géneros (Ficción, Misterio, Fantasía, etc.)
 - **3 préstamos activos**
+- **3 cursos**
+- **3 actividades**
+
+Ver [API_ENDPOINTS.md](API_ENDPOINTS.md) para los datos exactos a cargar.
 - **3 cursos**: 5to Secundaria, 4to Secundaria, 1er Bachillerato
 - **3 actividades**: Ensayos y cuestionarios
 

@@ -30,9 +30,30 @@
       "email": "admin@page.com",
       "password": "123456",
       "role": "admin",
-      "permisos": ["usuarios", "contenido", "cursos", "reportes"],
+      "permisos": [
+        "usuarios",
+        "contenido",
+        "cursos",
+        "reportes"
+      ],
       "fechaRegistro": "2022-06-01",
       "activo": true
+    },
+    {
+      "nombre": "awdawd",
+      "email": "a@gmail.com",
+      "password": "123456",
+      "confirmPassword": "123456",
+      "role": "alumno",
+      "grado": "Primaria",
+      "seccion": "b",
+      "colegio": "fermin tanguis",
+      "ciudad": "Lima",
+      "curso": "",
+      "fechaRegistro": "2025-12-03",
+      "activo": true,
+      "puntos": 0,
+      "id": 4
     }
   ],
   "books": [

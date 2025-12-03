@@ -17,6 +17,10 @@ export abstract class BaseRepository<T> {
     return `${environment.apiUrl}${this.endpoint}${path}`;
   }
 
+  protected getAuthUrl(path: string = ''): string {
+    return `${environment.apiUrl}${environment.endpoints.auth}${path}`;
+  }
+
   findAll(): Observable<T[]> {
     return this.http.get<T[]>(this.getUrl());
   }

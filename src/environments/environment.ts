@@ -5,14 +5,14 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000',
-  apiPrefix: '',
+  apiUrl: 'http://localhost:8080',
+  apiPrefix: '/api',
   endpoints: {
-    users: '/users',
-    books: '/books',
-    borrowings: '/borrowings',
-    courses: '/courses',
-    activities: '/activities',
-    stats: '/stats'
+    auth: '/api/auth',
+    users: '/api/users',
+    books: '/api/books',
+    borrowings: '/api/borrowings',
+    courses: '/api/courses',
+    activities: '/api/activities'
   }
 };
