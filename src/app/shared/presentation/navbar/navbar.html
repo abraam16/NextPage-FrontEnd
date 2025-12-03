@@ -34,10 +34,8 @@
     <!-- Si es PROFESOR -->
     <ng-container *ngIf="authService.getCurrentUser()?.role === 'profesor'; else alumnoLinks">
 
-      <li><a routerLink="/libros">Biblioteca</a></li>
-      <li><a routerLink="/promociones">Promociones</a></li>
-      <li><a routerLink="/clases">Clases</a></li>
-      <li><a routerLink="/tareas">Tareas</a></li>
+      <li><a routerLink="/catalogo">Biblioteca</a></li>
+      <li><a routerLink="/home">Inicio</a></li>
       <li><a routerLink="/teacher-dashboard">Panel Docente</a></li>
 
       <!-- Nombre del profesor -->
@@ -53,8 +51,8 @@
 
     <!-- Si es ALUMNO -->
     <ng-template #alumnoLinks>
-      <li><a routerLink="/libros">Libros</a></li>
-      <li><a routerLink="/promociones">Promociones</a></li>
+      <li><a routerLink="/catalogo">Libros</a></li>
+      <li><a routerLink="/home">Inicio</a></li>
       <li>
         <a routerLink="/student-dashboard">
           {{ authService.getCurrentUser()?.nombre }}

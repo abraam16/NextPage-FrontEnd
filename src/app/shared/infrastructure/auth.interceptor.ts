@@ -17,12 +17,19 @@ export class AuthInterceptor implements HttpInterceptor {
     const isAuthRoute = request.url.includes('/api/auth/login') || 
                         request.url.includes('/api/auth/register');
     
+    console.log('🔒 Interceptor - URL:', request.url);
+    console.log('🔒 Interceptor - Token exists:', !!token);
+    console.log('🔒 Interceptor - Is auth route:', isAuthRoute);
+    
     if (token && !isAuthRoute) {
+      console.log('✅ Adding Authorization header');
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`
         }
       });
+    } else {
+      console.log('⚠️ NOT adding Authorization header (token:', !!token, ', authRoute:', isAuthRoute, ')');
     }
 
     return next.handle(request).pipe(

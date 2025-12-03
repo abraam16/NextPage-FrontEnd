@@ -22,12 +22,21 @@ export class CatalogoComponent implements OnInit {
   constructor(private catalogService: CatalogService) {}
 
   ngOnInit(): void {
+    console.log('📚 Cargando libros del catálogo...');
+    console.log('🔑 Token actual:', localStorage.getItem('jwtToken') ? 'Existe' : 'No existe');
+    
     this.catalogService.getAllBooks().subscribe({
       next: (books) => {
+        console.log('✅ Libros cargados:', books.length);
         this.libros = books;
         this.librosFiltrados = books;
       },
-      error: (error) => console.error('Error cargando libros:', error)
+      error: (error) => {
+        console.error('❌ Error cargando libros:', error);
+        console.error('Status:', error.status);
+        console.error('Message:', error.message);
+        console.error('URL:', error.url);
+      }
     });
   }
 

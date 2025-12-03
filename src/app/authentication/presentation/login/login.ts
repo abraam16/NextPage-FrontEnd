@@ -14,6 +14,7 @@ import { AuthService } from '../../application/auth.service';
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   errorLogin: string | null = null;
+  isLoading = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
 
@@ -30,18 +31,33 @@ export class LoginComponent implements OnInit {
       return;
     }
 
+    if(this.isLoading) {
+      console.warn('⚠️ Login already in progress, ignoring duplicate request');
+      return;
+    }
+
     const { email, password } = this.loginForm.value;
+    this.isLoading = true;
+    this.errorLogin = null;
+    
+    console.log('🚀 Sending login request...');
     
     this.authService.login({ email, password }).subscribe({
       next: (result) => {
+        console.log('✅ Login response received:', result);
+        this.isLoading = false;
         if (result.success) {
+          console.log('✅ Login successful, navigating to home');
           this.router.navigate(['/']);
         } else {
+          console.error('❌ Login failed:', result.error);
           this.errorLogin = result.error || 'Credenciales incorrectas';
         }
       },
-      error: () => {
-        this.errorLogin = 'Error al iniciar sesión';
+      error: (err) => {
+        console.error('❌ Login error:', err);
+        this.isLoading = false;
+        this.errorLogin = 'Error al iniciar sesión. Verifica que el backend esté corriendo.';
       }
     });
   }

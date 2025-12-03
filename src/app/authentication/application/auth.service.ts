@@ -19,15 +19,26 @@ export class AuthService {
   }
 
   login(credentials: LoginCredentials): Observable<AuthResult> {
+    console.log('🔑 AuthService.login() called');
     return this.userRepository
       .login(credentials)
       .pipe(
         map((response: any) => {
-          if (!response || !response.user) {
+          console.log('📦 Backend response:', response);
+          
+          if (!response || !response.token) {
+            console.error('❌ Invalid response: missing token');
             return { success: false, error: 'Credenciales incorrectas' };
           }
-          const user = response.user;
+          
+          // El backend envía el usuario directamente con el token incluido
           const token = response.token;
+          const user = response; // El response completo ES el usuario
+          
+          console.log('✅ Login successful, saving user and token');
+          console.log('👤 User:', user);
+          console.log('🔑 Token:', token);
+          
           this.saveUser(user, token);
           return { success: true, user };
         })

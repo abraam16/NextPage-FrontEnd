@@ -50,6 +50,7 @@ export class UserRepository extends BaseRepository<User> {
 
   register(userData: Partial<User>): Observable<any> {
     const url = `${environment.apiUrl}${environment.endpoints.auth}/register`;
+    console.log('📝 Register URL:', url);
     return this.http.post(url, userData, {
       headers: {
         'Content-Type': 'application/json'
