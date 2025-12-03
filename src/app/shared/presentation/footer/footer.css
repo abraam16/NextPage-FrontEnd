@@ -1,0 +1,39 @@
+.footer {
+  background-color: #1a237e; /* Mismo color que el navbar */
+  color: white;
+  font-family: 'Arial', sans-serif;
+}
+
+.footer-logo h3 {
+  font-family: 'Georgia', serif;
+  font-weight: bold;
+}
+
+.footer-logo small {
+  display: block;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.footer-social a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #f1c40f;
+  color: #1a237e;
+  font-size: 1rem;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.footer-social a:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  background-color: #d4ac0d;
+}
+
+.footer-rights {
+  font-size: 0.85rem;
+}

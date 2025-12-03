@@ -1,13 +1,17 @@
 import { Routes } from '@angular/router';
 
-// Importamos tus páginas CON LOS NOMBRES REALES de las clases
-import { HomeComponent } from './pages/home/home';
-import { LoginComponent } from './pages/login/login';
-import { RegistroComponent } from './pages/registro/registro';
-import { CatalogoComponent } from './pages/catalogo/catalogo';
-import { AdminPanelComponent } from './pages/admin-panel/admin-panel';
-import { StudentDashboardComponent } from './pages/student-dashboard/student-dashboard';
-import { TeacherDashboardComponent } from './pages/teacher-dashboard/teacher-dashboard';
+// Authentication Context - Presentation
+import { LoginComponent } from './authentication/presentation/login/login';
+import { RegistroComponent } from './authentication/presentation/registro/registro';
+
+// Library Context - Presentation
+import { HomeComponent } from './library/presentation/home/home';
+import { CatalogoComponent } from './library/presentation/catalogo/catalogo';
+import { AdminPanelComponent } from './library/presentation/admin-panel/admin-panel';
+import { StudentDashboardComponent } from './library/presentation/student-dashboard/student-dashboard';
+
+// Academic Context - Presentation
+import { TeacherDashboardComponent } from './academic/presentation/teacher-dashboard/teacher-dashboard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
